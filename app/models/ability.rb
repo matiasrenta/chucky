@@ -31,6 +31,7 @@ class Ability
 
     @user = user
     send(@user.role.name)
+    everybody_can_do
     cannot_for_everyone
   end
 
@@ -39,7 +40,6 @@ class Ability
   end
 
   def prueba
-    can [:manage], User
     can [:manage], Thing
   end
 
@@ -53,4 +53,11 @@ class Ability
       cannot [:create, :read, :update, :destroy], Role, id: Role.find_by_name('superuser').id
     end
   end
+
+  def everybody_can_do
+    can [:read, :update], User, id: @user.id
+    can :read, :dashboard
+    can :read, PublicActivity::Activity
+  end
+
 end

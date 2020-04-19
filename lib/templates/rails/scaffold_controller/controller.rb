@@ -8,7 +8,7 @@ class <%= controller_class_name %>Controller < ApplicationController
 
   # GET <%= route_url %>
   def index
-    @<%= plural_table_name %> = do_index(<%= class_name %>, params)
+    @<%= plural_table_name %> = indexize(<%= class_name %>)
   end
 
   # GET <%= route_url %>/1
@@ -25,7 +25,6 @@ class <%= controller_class_name %>Controller < ApplicationController
 
   # POST <%= route_url %>
   def create
-
     if @<%= orm_instance.save %>
       redirect_to @<%= singular_table_name %>, notice: t("simple_form.flash.successfully_created")
     else
@@ -37,32 +36,32 @@ class <%= controller_class_name %>Controller < ApplicationController
   # PATCH/PUT <%= route_url %>/1
   def update
     if @<%= orm_instance.update("#{singular_table_name}_params") %>
-      redirect_to @<%= singular_table_name %>, notice: t("simple_form.flash.successfully_updated")
+redirect_to @<%= singular_table_name %>, notice: t("simple_form.flash.successfully_updated")
     else
       generate_flash_msg_no_keep(@<%= singular_table_name %>)
-      render :edit
-    end
-  end
+render :edit
+   end
+end
 
-  # DELETE <%= route_url %>/1
-  def destroy
-    if @<%= orm_instance.destroy %>
+# DELETE <%= route_url %>/1
+def destroy
+  if @<%= orm_instance.destroy %>
       redirect_to <%= index_helper %>_url, notice: t("simple_form.flash.successfully_destroyed")
-    else
-      generate_flash_msg(@<%= singular_table_name %>)
+  else
+    generate_flash_msg(@<%= singular_table_name %>)
       redirect_to <%= index_helper %>_url
-    end
   end
+end
 
-  private
+private
 
-    # Only allow a trusted parameter "white list" through.
-    def <%= "#{singular_table_name}_params" %>
-      <%- if attributes_names.empty? -%>
-      params[:<%= singular_table_name %>]
+# Only allow a trusted parameter "white list" through.
+def <%= "#{singular_table_name}_params" %>
+<%- if attributes_names.empty? -%>
+    params[:<%= singular_table_name %>]
       <%- else -%>
-      params.require(:<%= singular_table_name %>).permit(<%= attributes_names.map { |name| ":#{name}" }.join(', ') %>)
-      <%- end -%>
-    end
+params.require(:<%= singular_table_name %>).permit(<%= attributes_names.map { |name| ":#{name}" }.join(', ') %>)
+<%- end -%>
+end
 end
 <% end -%>
